@@ -14,3 +14,7 @@ app.use(fileUpload({ useTempFiles: true }));
 app.use(cors());
 
 app.use("/api/v1",  router); 
+
+app.get("/",(req,res)=>{
+    res.send("Server is Working")
+});

@@ -19,7 +19,7 @@ export const register = async (req, res) => {
         .status(400)
         .json({ success: false, message: "please upload a avatar image" });
     }
-
+  
     let userExists = await User.findOne({
       $or: [{ email: email }, { phone: phone }],
     });
@@ -39,7 +39,7 @@ export const register = async (req, res) => {
         console.log(err);
       });
 
-     fs.rmSync(`./tmp/${file.avatar.tempFilePath}`, { recursive: true });
+     fs.rmSync(file.avatar.tempFilePath, { recursive: true });
 
     userExists = await User.create({
       name,

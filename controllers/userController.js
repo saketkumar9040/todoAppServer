@@ -1,11 +1,11 @@
 import cloudinary from "cloudinary";
 import fs from "fs";
+import mongoose from "mongoose";
 
 import { User } from "../models/userModel.js";
 import { sendMail } from "../utils/sendMail.js";
 import { sendToken } from "../utils/sendToken.js";
 import { sendOTP } from "../utils/sendSMS.js";
-import path from "path";
 
 
 export const register = async (req, res) => {
@@ -161,21 +161,25 @@ export const addTask = async (req, res) => {
 
 export const updateTask = async (req, res) => {
   try {
-    const { taskId } = req.params;
+    const {taskId}  = req.params;
 
-    if(!taskId){
-      return res.status(400).json({success:false,message:"please enter the task id"});
-    }
-
-    if (!taskId) {
-      return res
-        .status(400)
-        .json({ success: false, message: "please enter a valid task ID" });
+    if(!mongoose.Types.ObjectId.isValid(taskId)){
+      return res.status(400).json({success:false,message:"please enter a valid task id"});
     }
 
     const user = await User.findById(req.userId);
 
+    if(!user){
+      return res
+        .status(400)
+        .json({ success: false, message: "user does not exists" });
+    }
+
     user.task = user.tasks.find((task) => task._id.toString() === taskId.toString());
+   
+    if(user.task === undefined){
+      return res.status(404).send({success:false,message:"No such tasks exists"})
+    }
   
     user.task.completed = !user.task.completed;
 
@@ -333,7 +337,7 @@ export const resetPassword = async (req, res) => {
       return res.status(400).json({success:false,message:"please enter your OTP"});
     }
     
-    const user = await User.findOne({resetPasswordOtp:+otp,resetPasswordOtpExpiry:{$lt:Date.now()}}).select("+password")
+    const user = await User.findOne({resetPasswordOtp:+otp,resetPasswordOtpExpiry:{$gt:Date.now()}}).select("+password")
     if(!user){
       return res.status(404).send({success:false,message:"OTP Invalid or has been Expired"})
     }

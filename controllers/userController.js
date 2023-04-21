@@ -238,20 +238,21 @@ export const updateProfile = async (req, res) => {
     const user = await User.findById(req.userId);
 
     const { name } = req.body;
-        const avatar = req.files.avatar.tempFilePath;
-        if (!avatar || avatar[0] === undefined) {
+        const file = req.files;
+
+        if (!file || file === undefined || file === null) {
           return res
             .status(400)
-            .json({ success: false, message: "please upload a correct image" });
+            .json({ success: false, message: "please upload your avatar image" });
         }
     
     if(name){user.name=name};
-    if(avatar){
+    if(file.avatar){
       await cloudinary.v2.uploader.destroy(user.avatar.public_id);
-
-       const myCloud = await cloudinary.v2.uploader.upload(avatar, { folder: "TodoApp" })
       
-       fs.rmSync("./tmp", { recursive: true });
+       const myCloud = await cloudinary.v2.uploader.upload(file.avatar.tempFilePath, { folder: "TodoApp" })
+    
+       fs.rmSync(file.avatar.tempFilePath, { recursive: true });
 
        user.avatar ={
         public_id:myCloud.public_id,
@@ -272,7 +273,6 @@ export const updatePassword = async (req, res) => {
   try {
 
     const user = await User.findById(req.userId).select("+password")
-    console.log(user)
 
     const { oldPassword, newPassword } = req.body;
 

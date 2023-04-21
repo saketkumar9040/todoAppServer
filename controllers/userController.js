@@ -197,11 +197,11 @@ export const removeTask = async (req, res) => {
   try {
     const { taskId } = req.params;
 
-    if (!taskId) {
-      return res
-        .status(400)
-        .send({ success: false, message: "please enter a valid task ID" });
-    }
+   if (!mongoose.Types.ObjectId.isValid(taskId)) {
+     return res
+       .status(400)
+       .json({ success: false, message: "please enter a valid task id" });
+   }
 
     const user = await User.findById(req.userId);
 

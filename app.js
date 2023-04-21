@@ -10,7 +10,7 @@ export const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(fileUpload({ useTempFiles: true }));
+app.use(fileUpload({ useTempFiles: true, tempFileDir: `${process.cwd()}/temperoryImages/` }));
 app.use(cors());
 
 app.use("/api/v1",  router); 

@@ -5,14 +5,15 @@ import { User } from "../models/userModel.js";
 import { sendMail } from "../utils/sendMail.js";
 import { sendToken } from "../utils/sendToken.js";
 import { sendOTP } from "../utils/sendSMS.js";
+import path from "path";
 
 
 export const register = async (req, res) => {
   try {
     const { name, email, password, phone } = req.body;
 
-    const avatar = req.files.avatar.tempFilePath
-    if(!avatar || avatar[0] === undefined ){return res.status(400).json({success:false,message:"please upload a correct image"})}
+    const avatar = req.files.avatar.tempFilePath;
+    if(!avatar || avatar === undefined || avatar===null ){return res.status(400).json({success:false,message:"please upload a correct image"})}
 
     let userExists = await User.findOne({
       $or: [{ email: email }, { phone: phone }],
@@ -33,7 +34,7 @@ export const register = async (req, res) => {
         console.log(err);
       });
 
-     fs.rmSync("./temperoryImages",{recursive:true});
+     fs.rmSync(`${process.cwd()}/temperoryImages/`, { recursive: true });
 
     userExists = await User.create({
       name,

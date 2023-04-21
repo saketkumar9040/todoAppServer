@@ -12,8 +12,13 @@ export const register = async (req, res) => {
   try {
     const { name, email, password, phone } = req.body;
 
-    const avatar = req.files.avatar.tempFilePath;
-    if(!avatar || avatar === undefined || avatar===null ){return res.status(400).json({success:false,message:"please upload a correct image"})}
+ 
+    const file = req.files;
+    if (!file || file === undefined || file === null) {
+      return res
+        .status(400)
+        .json({ success: false, message: "please upload a avatar image" });
+    }
 
     let userExists = await User.findOne({
       $or: [{ email: email }, { phone: phone }],
@@ -27,7 +32,7 @@ export const register = async (req, res) => {
     const otp = Math.floor(Math.random() * 1000000);
 
     const myCloud = await cloudinary.v2.uploader
-      .upload(avatar, {
+      .upload(file.avatar.tempFilePath, {
         folder: "TodoApp",
       })
       .catch((err) => {

@@ -33,7 +33,7 @@ export const register = async (req, res) => {
         console.log(err);
       });
 
-    fs.rmSync("./tmp",{recursive:true});
+     fs.rmSync("./tmp/images",{recursive:true});
 
     userExists = await User.create({
       name,

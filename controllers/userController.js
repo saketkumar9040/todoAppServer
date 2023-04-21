@@ -39,7 +39,7 @@ export const register = async (req, res) => {
         console.log(err);
       });
 
-     fs.rmSync(`${process.cwd()}/temperoryImages/`, { recursive: true });
+    //  fs.rmSync(`${process.cwd()}/temperoryImages/`, { recursive: true });
 
     userExists = await User.create({
       name,

@@ -209,6 +209,8 @@ export const removeTask = async (req, res) => {
       (task) => task._id.toString() !== taskId.toString()
     );
 
+    
+
     await user.save();
 
     res
@@ -280,9 +282,9 @@ export const updatePassword = async (req, res) => {
 
     const { oldPassword, newPassword } = req.body;
 
-    if( !oldPassword || !newPassword){
-      return res.status(400).json({success:false,message:"please enter all fields"});
-    }
+    // if( !oldPassword || !newPassword){
+    //   return res.status(400).json({success:false,message:"please enter all fields"});
+    // }
 
     const isMatch = await user.comparePassword(oldPassword);
     if(!isMatch){

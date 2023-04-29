@@ -1,6 +1,7 @@
 import cloudinary from "cloudinary";
 import fs from "fs";
 import mongoose from "mongoose";
+import bcrypt from "bcrypt";
 
 import { User } from "../models/userModel.js";
 import { sendMail } from "../utils/sendMail.js";
@@ -291,7 +292,8 @@ export const updatePassword = async (req, res) => {
       return res.status(400).json({success:false,message:"Please enter the correct old password"})
     }
 
-    user.password = newPassword.toString();
+    let salt = await bcrypt.genSalt(10)
+    user.password = await bcrypt.hash(newPassword,salt);
     
     await user.save();
     
